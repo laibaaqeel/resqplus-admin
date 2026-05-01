@@ -155,7 +155,7 @@ function Users() {
                     {user.role}
                   </span>
                 </td>
-                <td>{user.Organization?.name || 'N/A'}</td>
+                <td>{user.organization?.name || user.Organization?.name || 'N/A'}</td>
                 <td>
                   <span
                     className={`status-badge ${(user.status || '').toLowerCase()}`}
