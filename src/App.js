@@ -1,36 +1,50 @@
-import React, { useState } from 'react';
+import React, { useState, lazy, Suspense } from 'react';
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import Login from './pages/Login';
-import Dashboard from './pages/Dashboard';
-import Organizations from './pages/Organizations';
-import Users from './pages/Users';
-import Accidents from './pages/Accidents';
-import Settings from './pages/Settings';
 import Sidebar from './components/Sidebar';
 import Navbar from './components/Navbar';
 import './App.css';
-import Reports from './pages/Reports';
-import Cameras from './pages/Cameras';
+
+// Lazy load all pages
+const Dashboard = lazy(() => import('./pages/Dashboard'));
+const Organizations = lazy(() => import('./pages/Organizations'));
+const Users = lazy(() => import('./pages/Users'));
+const Accidents = lazy(() => import('./pages/Accidents'));
+const Cameras = lazy(() => import('./pages/Cameras'));
+const Reports = lazy(() => import('./pages/Reports'));
+const Settings = lazy(() => import('./pages/Settings'));
+
+// Loading spinner shown during page transitions
+const PageLoader = () => (
+  <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '60vh' }}>
+    <div style={{
+      width: '48px', height: '48px',
+      border: '4px solid #e5e7eb',
+      borderTop: '4px solid #3b82f6',
+      borderRadius: '50%',
+      animation: 'spin 0.8s linear infinite'
+    }} />
+    <style>{`@keyframes spin { to { transform: rotate(360deg); } }`}</style>
+  </div>
+);
+
 function App() {
   const [isAuthenticated, setIsAuthenticated] = useState(() => {
-    // ← Auto-login on page refresh if token exists
     return !!localStorage.getItem('token');
   });
 
   const [user, setUser] = useState(() => {
-    // ← Restore user info on page refresh
     const saved = localStorage.getItem('user');
     return saved ? JSON.parse(saved) : null;
   });
 
   const handleLogin = (userData) => {
-    // ← Now receives user from Login component
     setIsAuthenticated(true);
     setUser(userData);
   };
 
   const handleLogout = () => {
-    localStorage.clear(); // ← Clear token + user on logout
+    localStorage.clear();
     setIsAuthenticated(false);
     setUser(null);
   };
@@ -47,18 +61,20 @@ function App() {
           <div className="dashboard-layout">
             <Sidebar />
             <div className="main-content">
-              <Navbar onLogout={handleLogout} user={user} /> {/* ← pass user to Navbar */}
+              <Navbar onLogout={handleLogout} user={user} />
               <div className="content-area">
-                <Routes>
-                  <Route path="/dashboard" element={<Dashboard />} />
-                  <Route path="/organizations" element={<Organizations />} />
-                  <Route path="/users" element={<Users />} />
-                  <Route path="/accidents" element={<Accidents />} />
-                  <Route path="/cameras" element={<Cameras />} />
-<Route path="/reports" element={<Reports />} />
-<Route path="/settings" element={<Settings />} />
-                  <Route path="*" element={<Navigate to="/dashboard" />} />
-                </Routes>
+                <Suspense fallback={<PageLoader />}>
+                  <Routes>
+                    <Route path="/dashboard" element={<Dashboard />} />
+                    <Route path="/organizations" element={<Organizations />} />
+                    <Route path="/users" element={<Users />} />
+                    <Route path="/accidents" element={<Accidents />} />
+                    <Route path="/cameras" element={<Cameras />} />
+                    <Route path="/reports" element={<Reports />} />
+                    <Route path="/settings" element={<Settings />} />
+                    <Route path="*" element={<Navigate to="/dashboard" />} />
+                  </Routes>
+                </Suspense>
               </div>
             </div>
           </div>
