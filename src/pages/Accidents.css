@@ -1,0 +1,119 @@
+.accidents-page {
+  padding: 12px 16px;
+  height: 100%;
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  overflow: hidden;
+}
+
+.filters-row {
+  display: flex;
+  gap: 12px;
+  flex-shrink: 0;
+}
+
+.filters-row .search-bar { flex: 1; }
+
+.search-bar {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  background: white;
+  padding: 10px 14px;
+  border-radius: 8px;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.07);
+}
+.search-bar input {
+  flex: 1;
+  border: none;
+  outline: none;
+  font-size: 13px;
+  background: none;
+}
+
+.filter-group {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  background: white;
+  padding: 10px 14px;
+  border-radius: 8px;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.07);
+  min-width: 180px;
+}
+.filter-group select {
+  flex: 1;
+  border: none;
+  outline: none;
+  font-size: 13px;
+  background: none;
+  cursor: pointer;
+}
+
+.accidents-list {
+  flex: 1;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding-right: 2px;
+}
+
+.accident-card {
+  background: white;
+  border-radius: 10px;
+  padding: 14px 16px;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.07);
+  flex-shrink: 0;
+  transition: box-shadow 0.2s;
+}
+.accident-card:hover { box-shadow: 0 4px 12px rgba(0,0,0,0.1); }
+
+.accident-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 10px;
+  padding-bottom: 10px;
+  border-bottom: 1px solid #f0f0f0;
+}
+
+.accident-id-section { display: flex; align-items: center; gap: 10px; }
+.accident-id-section h3 { font-size: 14px; color: #111; margin: 0 0 3px 0; }
+
+.severity-badge {
+  display: inline-block;
+  padding: 2px 8px;
+  border-radius: 6px;
+  font-size: 11px;
+  font-weight: 500;
+}
+.severity-badge.extreme { background: #ede9fe; color: #7c3aed; }
+.severity-badge.high    { background: #fee2e2; color: #dc2626; }
+.severity-badge.medium  { background: #fef3c7; color: #d97706; }
+.severity-badge.low     { background: #d1fae5; color: #059669; }
+
+.status-pill {
+  padding: 4px 12px;
+  border-radius: 20px;
+  font-size: 11px;
+  font-weight: 500;
+}
+.status-pill.active      { background: #fee2e2; color: #dc2626; }
+.status-pill.resolved    { background: #d1fae5; color: #059669; }
+.status-pill.false_alarm { background: #f3f4f6; color: #6b7280; }
+
+.accident-details { display: flex; flex-direction: column; gap: 5px; margin-bottom: 10px; }
+.detail-item { display: flex; align-items: center; gap: 8px; color: #666; font-size: 12px; }
+
+.accident-footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding-top: 10px;
+  border-top: 1px solid #f0f0f0;
+}
+.response-label { font-size: 11px; color: #999; margin-bottom: 2px; }
+.response-value { font-size: 13px; font-weight: 600; color: #111; }

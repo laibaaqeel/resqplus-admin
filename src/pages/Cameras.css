@@ -1,0 +1,182 @@
+.cameras-page {
+  padding: 12px 16px;
+  height: 100%;
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  overflow: hidden;
+}
+
+/* Top Bar */
+.cameras-topbar {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+  flex-shrink: 0;
+}
+.cameras-topbar .search-bar { flex: 1; }
+
+.search-bar {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  background: white;
+  padding: 10px 14px;
+  border-radius: 8px;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.07);
+}
+.search-bar input {
+  flex: 1; border: none; outline: none; font-size: 13px; background: none;
+}
+
+/* Stats Row */
+.camera-stats {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 10px;
+  flex-shrink: 0;
+}
+.cam-stat-card {
+  background: white;
+  border-radius: 8px;
+  padding: 12px 14px;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.07);
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+.cam-stat-value { font-size: 20px; font-weight: 700; color: #111; margin: 0; }
+.cam-stat-label { font-size: 11px; color: #888; margin: 0; }
+
+/* Grid */
+.cameras-grid {
+  flex: 1;
+  overflow-y: auto;
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+  gap: 12px;
+  align-content: start;
+}
+
+/* Camera Card */
+.camera-card {
+  background: white;
+  border-radius: 10px;
+  padding: 14px;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.07);
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  transition: box-shadow 0.2s;
+}
+.camera-card:hover { box-shadow: 0 4px 12px rgba(0,0,0,0.1); }
+
+.camera-card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+.camera-icon {
+  width: 38px; height: 38px;
+  background: #dbeafe;
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #2563eb;
+}
+
+.cam-status-badge {
+  font-size: 11px;
+  font-weight: 600;
+  padding: 3px 10px;
+  border-radius: 20px;
+  text-transform: capitalize;
+}
+.cam-status-badge.active   { background: #dcfce7; color: #16a34a; }
+.cam-status-badge.inactive { background: #fee2e2; color: #dc2626; }
+
+.camera-card-body h3 { font-size: 14px; font-weight: 600; color: #111; margin: 0 0 8px 0; }
+.cam-detail {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 12px;
+  color: #666;
+  margin-bottom: 4px;
+}
+
+.camera-card-footer {
+  display: flex;
+  gap: 8px;
+  justify-content: flex-end;
+  padding-top: 8px;
+  border-top: 1px solid #f0f0f0;
+}
+
+/* Empty State */
+.empty-state {
+  grid-column: 1/-1;
+  text-align: center;
+  padding: 40px;
+  color: #aaa;
+}
+
+/* Buttons */
+.btn-primary {
+  display: flex; align-items: center; gap: 6px;
+  background: #C41E3A; color: white; border: none;
+  padding: 10px 16px; border-radius: 8px;
+  font-size: 13px; font-weight: 500; cursor: pointer;
+  white-space: nowrap; transition: background 0.2s;
+}
+.btn-primary:hover { background: #a01830; }
+
+.btn-secondary {
+  background: #f3f4f6; color: #333; border: none;
+  padding: 10px 16px; border-radius: 8px; font-size: 13px; cursor: pointer;
+}
+
+.btn-icon {
+  background: #f3f4f6; border: none; padding: 6px;
+  border-radius: 6px; cursor: pointer;
+  display: flex; align-items: center; justify-content: center;
+  transition: background 0.2s;
+}
+.btn-icon:hover { background: #e5e7eb; }
+.btn-icon.btn-danger:hover { background: #fee2e2; color: #dc2626; }
+
+/* Modal */
+.modal-overlay {
+  position: fixed; inset: 0;
+  background: rgba(0,0,0,0.5);
+  display: flex; align-items: center; justify-content: center;
+  z-index: 1000;
+}
+.modal {
+  background: white; border-radius: 12px; padding: 24px;
+  width: 100%; max-width: 480px; max-height: 90vh;
+  overflow-y: auto; box-shadow: 0 20px 60px rgba(0,0,0,0.2);
+}
+.modal-header {
+  display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px;
+}
+.modal-header h3 { font-size: 16px; font-weight: 600; margin: 0; }
+.modal-header button { background: none; border: none; font-size: 22px; cursor: pointer; color: #888; }
+
+.form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+.form-group { margin-bottom: 12px; }
+.form-group label { display: block; font-size: 12px; font-weight: 500; color: #555; margin-bottom: 5px; }
+.form-group input,
+.form-group select {
+  width: 100%; padding: 9px 12px;
+  border: 1px solid #e5e7eb; border-radius: 8px;
+  font-size: 13px; outline: none; box-sizing: border-box; transition: border 0.2s;
+}
+.form-group input:focus,
+.form-group select:focus { border-color: #C41E3A; }
+
+.modal-footer {
+  display: flex; justify-content: flex-end; gap: 10px; margin-top: 16px;
+}
