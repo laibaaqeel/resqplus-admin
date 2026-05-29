@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Plus, Search, Edit, Trash2, User, Mail, Phone } from 'lucide-react';
+import toast from 'react-hot-toast';
 import './Users.css';
 import api from '../api/axios';
 
@@ -10,7 +11,6 @@ function Users() {
   const [users, setUsers] = useState([]);
   const [organizations, setOrganizations] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState('');
 
   const [formData, setFormData] = useState({
     name: '', email: '', password: '', phone: '',
@@ -24,7 +24,7 @@ function Users() {
       const res = await api.get('/users');
       setUsers(res.data);
     } catch (err) {
-      setError('Failed to load users');
+      toast.error('Failed to load users');
     } finally {
       setLoading(false);
     }
@@ -69,8 +69,9 @@ function Users() {
       }
       setShowModal(false);
       setEditingUser(null);
+      toast.success(editingUser ? 'User updated successfully' : 'User added successfully');
     } catch (err) {
-      alert(err.response?.data?.message || 'Failed to save user');
+      toast.error(err.response?.data?.message || 'Failed to save user');
     }
   };
 
@@ -79,8 +80,9 @@ function Users() {
       try {
         await api.delete(`/users/${id}`);
         setUsers(users.filter(u => u.id !== id));
+        toast.success('User deleted');
       } catch (err) {
-        alert(err.response?.data?.message || 'Failed to delete user');
+        toast.error(err.response?.data?.message || 'Failed to delete user');
       }
     }
   };
@@ -91,7 +93,7 @@ function Users() {
       await api.put(`/users/${user.id}/status`, { status: newStatus });
       setUsers(users.map(u => u.id === user.id ? { ...u, status: newStatus } : u));
     } catch (err) {
-      alert('Failed to update status');
+      toast.error('Failed to update status');
     }
   };
 
@@ -119,9 +121,6 @@ function Users() {
         </button>
       </div>
 
-      {loading && <p style={{ color: '#aaa', padding: '20px' }}>Loading users...</p>}
-      {error && <p style={{ color: '#ef4444', padding: '20px' }}>{error}</p>}
-
       {/* Table */}
       <div className="table-container">
         <table className="users-table">
@@ -136,7 +135,17 @@ function Users() {
             </tr>
           </thead>
           <tbody>
-            {filteredUsers.map((user) => (
+            {loading && [...Array(6)].map((_, i) => (
+              <tr key={`sk-${i}`}>
+                <td><div style={{display:'flex',alignItems:'center',gap:10}}><div className="skeleton-avatar"/><div className="skeleton-line medium"/></div></td>
+                <td><div className="skeleton-line wide"/><div className="skeleton-line short"/></td>
+                <td><div className="skeleton-line short"/></td>
+                <td><div className="skeleton-line medium"/></td>
+                <td><div className="skeleton-line short"/></td>
+                <td><div style={{display:'flex',gap:6}}><div className="skeleton-btn"/><div className="skeleton-btn"/></div></td>
+              </tr>
+            ))}
+            {!loading && filteredUsers.map((user) => (
               <tr key={user.id}>
                 <td>
                   <div className="user-cell">
@@ -175,7 +184,7 @@ function Users() {
               </tr>
             ))}
             {!loading && filteredUsers.length === 0 && (
-              <tr><td colSpan="6" style={{ textAlign: 'center', color: '#aaa', padding: '20px' }}>No users found</td></tr>
+              <tr><td colSpan="6" style={{ textAlign: 'center', color: '#bbb', padding: '32px', fontSize: 13 }}>No users found</td></tr>
             )}
           </tbody>
         </table>
@@ -183,8 +192,8 @@ function Users() {
 
       {/* Modal */}
       {showModal && (
-        <div className="modal-overlay" onClick={() => setShowModal(false)}>
-          <div className="modal" onClick={(e) => e.stopPropagation()}>
+        <div className="modal-overlay" onClick={(e) => { if (e.target === e.currentTarget) setShowModal(false); }}>
+          <div className="modal">
             <div className="modal-header">
               <h3>{editingUser ? 'Edit User' : 'Add New User'}</h3>
               <button onClick={() => setShowModal(false)}>×</button>

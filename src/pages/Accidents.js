@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Search, Filter, MapPin, Clock, AlertTriangle } from 'lucide-react';
+import toast from 'react-hot-toast';
 import './Accidents.css';
 import api from '../api/axios';
 
@@ -8,7 +9,6 @@ function Accidents() {
   const [filterStatus, setFilterStatus] = useState('All');
   const [accidents, setAccidents] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState('');
 
   useEffect(() => {
     fetchAccidents();
@@ -19,8 +19,7 @@ function Accidents() {
       const res = await api.get('/accidents');
       setAccidents(res.data);
     } catch (err) {
-      setError('Failed to load accidents');
-      console.error(err);
+      toast.error('Failed to load accidents');
     } finally {
       setLoading(false);
     }
@@ -32,8 +31,9 @@ function Accidents() {
       setAccidents(accidents.map(a =>
         a.id === id ? { ...a, status: newStatus } : a
       ));
+      toast.success('Status updated');
     } catch (err) {
-      alert(err.response?.data?.message || 'Failed to update status');
+      toast.error(err.response?.data?.message || 'Failed to update status');
     }
   };
 
@@ -90,15 +90,26 @@ function Accidents() {
         </div>
       </div>
 
-      {loading && <p style={{ color: '#aaa', padding: '20px' }}>Loading accidents...</p>}
-      {error && <p style={{ color: '#ef4444', padding: '20px' }}>{error}</p>}
-
       <div className="accidents-list">
+        {loading && [...Array(4)].map((_, i) => (
+          <div key={`sk-${i}`} className="accident-card">
+            <div style={{display:'flex',justifyContent:'space-between',alignItems:'center',marginBottom:12}}>
+              <div style={{display:'flex',gap:10,alignItems:'center'}}>
+                <div className="skeleton-icon" style={{width:36,height:36,borderRadius:8}}/>
+                <div><div className="skeleton-line medium"/><div className="skeleton-line short"/></div>
+              </div>
+              <div className="skeleton-line short" style={{width:70}}/>
+            </div>
+            <div className="skeleton-line wide" style={{marginBottom:6}}/>
+            <div className="skeleton-line medium"/>
+          </div>
+        ))}
+
         {!loading && filteredAccidents.length === 0 && (
-          <p style={{ color: '#aaa', padding: '20px' }}>No accidents found</p>
+          <p style={{ color: '#bbb', padding: '20px', fontSize: 13 }}>No accidents found</p>
         )}
 
-        {filteredAccidents.map((accident) => {
+        {!loading && filteredAccidents.map((accident) => {
           const { date, time } = formatDateTime(accident.timestamp);
           return (
             <div key={accident.id} className="accident-card">

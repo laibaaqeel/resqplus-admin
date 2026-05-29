@@ -120,6 +120,9 @@
 .org-info h3 { font-size: 14px; font-weight: 600; color: #111; margin: 0 0 4px 0; }
 .org-type { font-size: 11px; color: #C41E3A; font-weight: 500; margin: 0 0 6px 0; }
 .org-contact, .org-email, .org-address {
+  display: flex;
+  align-items: center;
+  gap: 5px;
   font-size: 12px;
   color: #666;
   margin: 2px 0;

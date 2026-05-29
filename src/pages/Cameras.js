@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Plus, Search, Edit, Trash2, Camera, MapPin, Activity } from 'lucide-react';
+import toast from 'react-hot-toast';
 import './Cameras.css';
 import api from '../api/axios';
 
@@ -9,7 +10,6 @@ function Cameras() {
   const [searchTerm, setSearchTerm] = useState('');
   const [cameras, setCameras] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState('');
 
   const [formData, setFormData] = useState({
     name: '', location: '', latitude: '', longitude: '', fps: 30, status: 'active'
@@ -22,7 +22,7 @@ function Cameras() {
       const res = await api.get('/cameras');
       setCameras(res.data);
     } catch (err) {
-      setError('Failed to load cameras');
+      toast.error('Failed to load cameras');
     } finally {
       setLoading(false);
     }
@@ -60,8 +60,9 @@ await fetchCameras(); // refresh full list from DB
       setShowModal(false);
       setEditingCamera(null);
       setFormData({ name: '', location: '', latitude: '', longitude: '', fps: 30, status: 'active' });
+      toast.success(editingCamera ? 'Camera updated' : 'Camera added');
     } catch (err) {
-      alert(err.response?.data?.message || 'Failed to save camera');
+      toast.error(err.response?.data?.message || 'Failed to save camera');
     }
   };
 
@@ -70,8 +71,9 @@ await fetchCameras(); // refresh full list from DB
       try {
         await api.delete(`/cameras/${id}`);
         setCameras(cameras.filter(c => c.id !== id));
+        toast.success('Camera deleted');
       } catch (err) {
-        alert(err.response?.data?.message || 'Failed to delete camera');
+        toast.error(err.response?.data?.message || 'Failed to delete camera');
       }
     }
   };
@@ -132,12 +134,22 @@ await fetchCameras(); // refresh full list from DB
         </div>
       </div>
 
-      {loading && <p style={{ color: '#aaa', padding: '20px' }}>Loading cameras...</p>}
-      {error && <p style={{ color: '#ef4444', padding: '20px' }}>{error}</p>}
-
       {/* Grid */}
       <div className="cameras-grid">
-        {filteredCameras.map((camera) => (
+        {loading && [...Array(6)].map((_, i) => (
+          <div key={`sk-${i}`} className="camera-card">
+            <div className="camera-card-header">
+              <div className="skeleton-icon" style={{width:36,height:36,borderRadius:8}}/>
+              <div className="skeleton-line short"/>
+            </div>
+            <div className="camera-card-body">
+              <div className="skeleton-line wide" style={{marginBottom:8}}/>
+              <div className="skeleton-line medium"/>
+              <div className="skeleton-line short"/>
+            </div>
+          </div>
+        ))}
+        {!loading && filteredCameras.map((camera) => (
           <div key={camera.id} className="camera-card">
             <div className="camera-card-header">
               <div className="camera-icon">
@@ -159,8 +171,9 @@ await fetchCameras(); // refresh full list from DB
               </div>
               {camera.latitude && (
                 <div className="cam-detail">
+                  <MapPin size={12} color="#aaa" />
                   <span style={{ fontSize: 11, color: '#aaa' }}>
-                    📍 {parseFloat(camera.latitude).toFixed(4)}, {parseFloat(camera.longitude).toFixed(4)}
+                    {parseFloat(camera.latitude).toFixed(4)}, {parseFloat(camera.longitude).toFixed(4)}
                   </span>
                 </div>
               )}
@@ -185,8 +198,8 @@ await fetchCameras(); // refresh full list from DB
 
       {/* Modal */}
       {showModal && (
-        <div className="modal-overlay" onClick={() => setShowModal(false)}>
-          <div className="modal" onClick={(e) => e.stopPropagation()}>
+        <div className="modal-overlay" onClick={(e) => { if (e.target === e.currentTarget) setShowModal(false); }}>
+          <div className="modal">
             <div className="modal-header">
               <h3>{editingCamera ? 'Edit Camera' : 'Add New Camera'}</h3>
               <button onClick={() => setShowModal(false)}>×</button>

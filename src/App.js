@@ -1,5 +1,6 @@
 import React, { useState, lazy, Suspense } from 'react';
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
+import { Toaster } from 'react-hot-toast';
 import Login from './pages/Login';
 import Sidebar from './components/Sidebar';
 import Navbar from './components/Navbar';
@@ -18,11 +19,11 @@ const Settings = lazy(() => import('./pages/Settings'));
 const PageLoader = () => (
   <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '60vh' }}>
     <div style={{
-      width: '48px', height: '48px',
-      border: '4px solid #e5e7eb',
-      borderTop: '4px solid #3b82f6',
+      width: '40px', height: '40px',
+      border: '3px solid #f0f0f0',
+      borderTop: '3px solid #C41E3A',
       borderRadius: '50%',
-      animation: 'spin 0.8s linear infinite'
+      animation: 'spin 0.7s linear infinite'
     }} />
     <style>{`@keyframes spin { to { transform: rotate(360deg); } }`}</style>
   </div>
@@ -51,6 +52,13 @@ function App() {
 
   return (
     <Router>
+      <Toaster
+        position="top-right"
+        toastOptions={{
+          success: { duration: 3000, style: { fontSize: 13, fontFamily: 'Inter, sans-serif' } },
+          error:   { duration: 4000, style: { fontSize: 13, fontFamily: 'Inter, sans-serif' } },
+        }}
+      />
       <div className="App">
         {!isAuthenticated ? (
           <Routes>

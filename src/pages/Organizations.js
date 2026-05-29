@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
-import { Plus, Search, Edit, Trash2, Building2 } from 'lucide-react';
+import { Plus, Search, Edit, Trash2, Building2, Phone, Mail, MapPin } from 'lucide-react';
+import toast from 'react-hot-toast';
 import './Organizations.css';
 import api from '../api/axios';
 
@@ -9,7 +10,6 @@ function Organizations() {
   const [searchTerm, setSearchTerm] = useState('');
   const [organizations, setOrganizations] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState('');
 
   const [formData, setFormData] = useState({
     name: '', type: 'Hospital', phone: '', email: '', address: ''
@@ -22,7 +22,7 @@ function Organizations() {
       const res = await api.get('/organizations');
       setOrganizations(res.data);
     } catch (err) {
-      setError('Failed to load organizations');
+      toast.error('Failed to load organizations');
     } finally {
       setLoading(false);
     }
@@ -56,8 +56,9 @@ function Organizations() {
       setShowModal(false);
       setEditingOrg(null);
       setFormData({ name: '', type: 'Hospital', phone: '', email: '', address: '' });
+      toast.success(editingOrg ? 'Organization updated' : 'Organization added');
     } catch (err) {
-      alert(err.response?.data?.message || 'Failed to save organization');
+      toast.error(err.response?.data?.message || 'Failed to save organization');
     }
   };
 
@@ -66,8 +67,9 @@ function Organizations() {
       try {
         await api.delete(`/organizations/${id}`);
         setOrganizations(organizations.filter(org => org.id !== id));
+        toast.success('Organization deleted');
       } catch (err) {
-        alert(err.response?.data?.message || 'Failed to delete organization');
+        toast.error(err.response?.data?.message || 'Failed to delete organization');
       }
     }
   };
@@ -97,20 +99,29 @@ function Organizations() {
         </button>
       </div>
 
-      {loading && <p style={{ color: '#aaa', padding: '20px' }}>Loading...</p>}
-      {error && <p style={{ color: '#ef4444', padding: '20px' }}>{error}</p>}
-
       {/* Grid */}
       <div className="organizations-grid">
-        {filteredOrgs.map((org) => (
+        {loading && [...Array(6)].map((_, i) => (
+          <div key={`sk-${i}`} className="org-card">
+            <div className="skeleton-icon"/>
+            <div style={{flex:1}}>
+              <div className="skeleton-line wide" style={{marginBottom:8}}/>
+              <div className="skeleton-line short" style={{marginBottom:6}}/>
+              <div className="skeleton-line medium"/>
+              <div className="skeleton-line medium"/>
+              <div className="skeleton-line wide"/>
+            </div>
+          </div>
+        ))}
+        {!loading && filteredOrgs.map((org) => (
           <div key={org.id} className="org-card">
             <div className="org-icon"><Building2 size={22} /></div>
             <div className="org-info">
               <h3>{org.name}</h3>
               <p className="org-type">{org.type}</p>
-              <p className="org-contact">📞 {org.phone}</p>
-              <p className="org-email">✉️ {org.email}</p>
-              <p className="org-address">📍 {org.address}</p>
+              <p className="org-contact"><Phone size={12} /> {org.phone}</p>
+              <p className="org-email"><Mail size={12} /> {org.email}</p>
+              <p className="org-address"><MapPin size={12} /> {org.address}</p>
             </div>
             <div className="org-actions">
               <button className="btn-icon" title="Edit" onClick={() => openEditModal(org)}>
@@ -123,14 +134,14 @@ function Organizations() {
           </div>
         ))}
         {!loading && filteredOrgs.length === 0 && (
-          <p style={{ color: '#aaa', padding: '20px' }}>No organizations found</p>
+          <p style={{ color: '#bbb', padding: '20px', fontSize: 13 }}>No organizations found</p>
         )}
       </div>
 
       {/* Modal */}
       {showModal && (
-        <div className="modal-overlay" onClick={() => setShowModal(false)}>
-          <div className="modal" onClick={(e) => e.stopPropagation()}>
+        <div className="modal-overlay" onClick={(e) => { if (e.target === e.currentTarget) setShowModal(false); }}>
+          <div className="modal">
             <div className="modal-header">
               <h3>{editingOrg ? 'Edit Organization' : 'Add New Organization'}</h3>
               <button onClick={() => setShowModal(false)}>×</button>

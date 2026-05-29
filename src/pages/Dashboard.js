@@ -141,7 +141,7 @@ function Dashboard() {
       {/* Real-time Alert Popup */}
       {alert && (
         <div className="realtime-alert">
-          <div className="alert-icon">🚨</div>
+          <div className="alert-icon"><AlertTriangle size={18} color="white" /></div>
           <div className="alert-content">
             <p className="alert-title">NEW ACCIDENT DETECTED</p>
             <p className="alert-location">{alert.location}</p>
@@ -212,7 +212,7 @@ function Dashboard() {
                       <strong style={{ color: getSeverityColor(accident.severity) }}>
                         {accident.severity?.toUpperCase()} SEVERITY
                       </strong>
-                      <p style={{ margin: '6px 0 2px' }}>📍 {accident.location}</p>
+                      <p style={{ margin: '6px 0 2px' }}>Location: {accident.location}</p>
                       <p style={{ margin: '2px 0' }}>Status: <strong>{accident.status}</strong></p>
                       <p style={{ margin: '2px 0', fontSize: 12, color: '#666' }}>
                         {new Date(accident.timestamp).toLocaleString('en-PK')}
