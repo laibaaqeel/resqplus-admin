@@ -47,12 +47,11 @@ function Organizations() {
     e.preventDefault();
     try {
       if (editingOrg) {
-        const res = await api.put(`/organizations/${editingOrg.id}`, formData);
-        setOrganizations(organizations.map(o => o.id === editingOrg.id ? res.data : o));
+        await api.put(`/organizations/${editingOrg.id}`, formData);
       } else {
-        const res = await api.post('/organizations', formData);
-        setOrganizations([...organizations, res.data]);
+        await api.post('/organizations', formData);
       }
+      await fetchOrganizations();
       setShowModal(false);
       setEditingOrg(null);
       setFormData({ name: '', type: 'Hospital', phone: '', email: '', address: '' });
@@ -146,7 +145,7 @@ function Organizations() {
               <h3>{editingOrg ? 'Edit Organization' : 'Add New Organization'}</h3>
               <button onClick={() => setShowModal(false)}>×</button>
             </div>
-            <form onSubmit={handleSubmit}>
+            <form onSubmit={handleSubmit} onKeyDown={(e) => { if (e.key === 'Enter' && e.target.tagName === 'INPUT') e.preventDefault(); }}>
               <div className="form-group">
                 <label>Organization Name</label>
                 <input type="text" value={formData.name}

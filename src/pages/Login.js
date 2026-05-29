@@ -1,12 +1,11 @@
 import React, { useState } from 'react';
-import { Shield } from 'lucide-react';
+import { Shield, Mail, Lock, LogIn } from 'lucide-react';
 import './Login.css';
-import api from '../api/axios'; // ← import your axios instance
+import api from '../api/axios';
 
 function Login({ onLogin }) {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const [rememberMe, setRememberMe] = useState(false);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
 
@@ -14,28 +13,19 @@ function Login({ onLogin }) {
     e.preventDefault();
     setError('');
     setLoading(true);
-
     try {
       const response = await api.post('/auth/login', { email, password });
-
       const { token, user } = response.data;
-
-      // Save token & user info
       localStorage.setItem('token', token);
       localStorage.setItem('user', JSON.stringify(user));
-
-      // Block non-admins
       if (user.role !== 'admin') {
         setError('Access denied. Admin accounts only.');
         localStorage.clear();
         return;
       }
-
-      onLogin(user); // pass user up to App.js
-
+      onLogin(user);
     } catch (err) {
-      const msg = err.response?.data?.message || 'Login failed. Check your credentials.';
-      setError(msg);
+      setError(err.response?.data?.message || 'Invalid email or password.');
     } finally {
       setLoading(false);
     }
@@ -44,73 +34,59 @@ function Login({ onLogin }) {
   return (
     <div className="login-container">
       <div className="login-card">
-        <div className="login-header">
-          <Shield size={48} color="white" />
-          <h1>RESQ+</h1>
-          <p>EMERGENCY RESPONSE SYSTEM</p>
+
+        <div className="login-brand">
+          <div className="brand-icon"><Shield size={20} color="white" /></div>
+          <span className="brand-name">RESQ<span className="brand-plus">+</span></span>
         </div>
 
-        <div className="login-body">
-          <h2>ADMIN LOGIN</h2>
-          <p className="login-subtitle">Enter your credentials to access the system</p>
+        <h2 className="login-title">Admin Sign In</h2>
+        <p className="login-subtitle">Emergency Response Management System</p>
 
-          {/* Show error if login fails */}
-          {error && (
-            <div style={{
-              background: '#ff000020',
-              border: '1px solid #ff4444',
-              color: '#ff4444',
-              padding: '10px 14px',
-              borderRadius: '6px',
-              marginBottom: '16px',
-              fontSize: '14px'
-            }}>
-              {error}
-            </div>
-          )}
+        {error && <div className="login-error">{error}</div>}
 
-          <form onSubmit={handleSubmit}>
-            <div className="form-group">
-              <label>Username/Email</label>
+        <form onSubmit={handleSubmit}>
+          <div className="login-field">
+            <label>Email Address</label>
+            <div className="input-wrapper">
+              <Mail size={16} className="input-icon" />
               <input
-                type="text"
-                placeholder="Enter your email"
+                type="email"
+                placeholder="admin@resqplus.com"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 required
+                autoComplete="email"
               />
             </div>
+          </div>
 
-            <div className="form-group">
-              <label>Password</label>
+          <div className="login-field">
+            <label>Password</label>
+            <div className="input-wrapper">
+              <Lock size={16} className="input-icon" />
               <input
                 type="password"
                 placeholder="Enter your password"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 required
+                autoComplete="current-password"
               />
             </div>
+          </div>
 
-            <div className="form-footer">
-              <label className="remember-me">
-                <input
-                  type="checkbox"
-                  checked={rememberMe}
-                  onChange={(e) => setRememberMe(e.target.checked)}
-                />
-                <span>Remember me</span>
-              </label>
-              <a href="#forgot" className="forgot-password">
-                Forgot password?
-              </a>
-            </div>
+          <button type="submit" className="login-btn" disabled={loading}>
+            {loading ? (
+              <span className="login-spinner" />
+            ) : (
+              <LogIn size={16} />
+            )}
+            {loading ? 'Signing in...' : 'Sign In'}
+          </button>
+        </form>
 
-            <button type="submit" className="login-btn" disabled={loading}>
-              {loading ? 'SIGNING IN...' : 'SIGN IN'}
-            </button>
-          </form>
-        </div>
+        <p className="login-footer">Authorized personnel only</p>
       </div>
     </div>
   );

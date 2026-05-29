@@ -204,7 +204,7 @@ await fetchCameras(); // refresh full list from DB
               <h3>{editingCamera ? 'Edit Camera' : 'Add New Camera'}</h3>
               <button onClick={() => setShowModal(false)}>×</button>
             </div>
-            <form onSubmit={handleSubmit}>
+            <form onSubmit={handleSubmit} onKeyDown={(e) => { if (e.key === 'Enter' && e.target.tagName === 'INPUT') e.preventDefault(); }}>
               <div className="form-group">
                 <label>Camera Name</label>
                 <input type="text" value={formData.name}

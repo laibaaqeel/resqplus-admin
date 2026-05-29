@@ -198,7 +198,7 @@ function Users() {
               <h3>{editingUser ? 'Edit User' : 'Add New User'}</h3>
               <button onClick={() => setShowModal(false)}>×</button>
             </div>
-            <form onSubmit={handleSubmit}>
+            <form onSubmit={handleSubmit} onKeyDown={(e) => { if (e.key === 'Enter' && e.target.tagName === 'INPUT') e.preventDefault(); }}>
               <div className="form-group">
                 <label>Full Name</label>
                 <input type="text" value={formData.name} onChange={(e) => setFormData({...formData, name: e.target.value})} required />
