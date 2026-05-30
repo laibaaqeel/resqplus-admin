@@ -22,9 +22,17 @@ const createIcon = (color) => L.divIcon({
   iconAnchor: [8, 8],
 });
 
-const redIcon    = createIcon('#dc2626');
-const greenIcon  = createIcon('#16a34a');
-const yellowIcon = createIcon('#f59e0b');
+const createParamedicIcon = () => L.divIcon({
+  className: '',
+  html: `<div style="width:28px;height:28px;background:#1d4ed8;border:2px solid white;border-radius:50%;box-shadow:0 2px 8px rgba(0,0,0,0.5);display:flex;align-items:center;justify-content:center;font-size:14px;">🚑</div>`,
+  iconSize: [28, 28],
+  iconAnchor: [14, 14],
+});
+
+const redIcon       = createIcon('#dc2626');
+const greenIcon     = createIcon('#16a34a');
+const yellowIcon    = createIcon('#f59e0b');
+const paramedicIcon = createParamedicIcon();
 
 function Dashboard() {
   const [stats, setStats] = useState(null);
@@ -32,6 +40,7 @@ function Dashboard() {
   const [mapData, setMapData] = useState([]);
   const [loading, setLoading] = useState(true);
   const [alert, setAlert] = useState(null);
+  const [paramedicsOnMap, setParamedicsOnMap] = useState({});
 
   // Fetch data on mount + every 30s
   useEffect(() => {
@@ -67,7 +76,17 @@ function Dashboard() {
       setTimeout(() => setAlert(null), 6000);
     });
 
-    return () => { socket.off('new_accident'); };
+    socket.on('paramedic_location', (data) => {
+      setParamedicsOnMap(prev => ({
+        ...prev,
+        [data.paramedic_id]: data,
+      }));
+    });
+
+    return () => {
+      socket.off('new_accident');
+      socket.off('paramedic_location');
+    };
   }, []);
 
   const fetchDashboardData = async () => {
@@ -189,6 +208,7 @@ function Dashboard() {
               <span><span className="dot red"></span> Active/High</span>
               <span><span className="dot yellow"></span> Medium</span>
               <span><span className="dot green"></span> Resolved</span>
+              <span><span className="dot blue"></span> Paramedic</span>
             </div>
           </div>
           <div className="map-container">
@@ -216,6 +236,23 @@ function Dashboard() {
                       <p style={{ margin: '2px 0' }}>Status: <strong>{accident.status}</strong></p>
                       <p style={{ margin: '2px 0', fontSize: 12, color: '#666' }}>
                         {new Date(accident.timestamp).toLocaleString('en-PK')}
+                      </p>
+                    </div>
+                  </Popup>
+                </Marker>
+              ))}
+              {Object.values(paramedicsOnMap).map((p) => (
+                <Marker
+                  key={`paramedic-${p.paramedic_id}`}
+                  position={[p.latitude, p.longitude]}
+                  icon={paramedicIcon}
+                >
+                  <Popup>
+                    <div style={{ minWidth: 160 }}>
+                      <strong style={{ color: '#1d4ed8' }}>Paramedic En Route</strong>
+                      <p style={{ margin: '6px 0 2px' }}>{p.name}</p>
+                      <p style={{ margin: '2px 0', fontSize: 12, color: '#666' }}>
+                        {p.vehicle_type || 'Ambulance'} • Live Location
                       </p>
                     </div>
                   </Popup>
