@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import StatCard from '../components/StatCard';
-import { AlertTriangle, Bell, Activity, Users, Zap, X, Phone } from 'lucide-react';
+import { AlertTriangle, Bell, Activity, Users, Zap, X } from 'lucide-react';
 import { MapContainer, TileLayer, Marker, Popup } from 'react-leaflet';
 import L from 'leaflet';
 import 'leaflet/dist/leaflet.css';
