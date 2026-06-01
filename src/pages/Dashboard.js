@@ -98,7 +98,7 @@ function Dashboard() {
   const fireTestAccident = async () => {
     setTestLoading(true);
     try {
-      const res = await fetch('https://resqplus-backend-production.up.railway.app/api/accidents', {
+      const res = await fetch('https://resqplus-backend-production-89f4.up.railway.app/api/accidents', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ latitude: parseFloat(testForm.latitude), longitude: parseFloat(testForm.longitude), location: testForm.location, severity: testForm.severity, description: testForm.description }),

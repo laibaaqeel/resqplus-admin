@@ -1,7 +1,7 @@
 import axios from 'axios';
 
 const api = axios.create({
-  baseURL: 'https://resqplus-backend-production.up.railway.app/api',
+  baseURL: 'https://resqplus-backend-production-89f4.up.railway.app/api',
   timeout: 10000,
 });
 
