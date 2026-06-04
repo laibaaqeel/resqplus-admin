@@ -11,7 +11,6 @@ const Dashboard = lazy(() => import('./pages/Dashboard'));
 const Organizations = lazy(() => import('./pages/Organizations'));
 const Users = lazy(() => import('./pages/Users'));
 const Accidents = lazy(() => import('./pages/Accidents'));
-const Cameras = lazy(() => import('./pages/Cameras'));
 const Reports = lazy(() => import('./pages/Reports'));
 const Settings = lazy(() => import('./pages/Settings'));
 
@@ -77,7 +76,6 @@ function App() {
                     <Route path="/organizations" element={<Organizations />} />
                     <Route path="/users" element={<Users />} />
                     <Route path="/accidents" element={<Accidents />} />
-                    <Route path="/cameras" element={<Cameras />} />
                     <Route path="/reports" element={<Reports />} />
                     <Route path="/settings" element={<Settings />} />
                     <Route path="*" element={<Navigate to="/dashboard" />} />

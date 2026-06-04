@@ -3,6 +3,7 @@ import { Search, Filter, MapPin, Clock, AlertTriangle } from 'lucide-react';
 import toast from 'react-hot-toast';
 import './Accidents.css';
 import api from '../api/axios';
+import socket from '../socket';
 
 function Accidents() {
   const [searchTerm, setSearchTerm] = useState('');
@@ -12,6 +13,23 @@ function Accidents() {
 
   useEffect(() => {
     fetchAccidents();
+    const interval = setInterval(fetchAccidents, 30000);
+    return () => clearInterval(interval);
+  }, []);
+
+  // Real-time status updates from the paramedic app
+  useEffect(() => {
+    const handleUpdate = (data) => {
+      setAccidents(prev => prev.map(a =>
+        a.id === data.id ? { ...a, ...data } : a
+      ));
+    };
+    socket.on('accident_updated', handleUpdate);
+    socket.on('accident_status_updated', handleUpdate);
+    return () => {
+      socket.off('accident_updated', handleUpdate);
+      socket.off('accident_status_updated', handleUpdate);
+    };
   }, []);
 
   const fetchAccidents = async () => {
@@ -84,6 +102,9 @@ function Accidents() {
           <select value={filterStatus} onChange={(e) => setFilterStatus(e.target.value)}>
             <option value="All">All Status</option>
             <option value="active">Active</option>
+            <option value="accepted">Accepted</option>
+            <option value="en_route">En Route</option>
+            <option value="delivered">Delivered</option>
             <option value="resolved">Resolved</option>
             <option value="false_alarm">False Alarm</option>
           </select>
@@ -164,6 +185,9 @@ function Accidents() {
                     }}
                   >
                     <option value="active">Active</option>
+                    <option value="accepted">Accepted</option>
+                    <option value="en_route">En Route</option>
+                    <option value="delivered">Delivered</option>
                     <option value="resolved">Resolved</option>
                     <option value="false_alarm">False Alarm</option>
                   </select>

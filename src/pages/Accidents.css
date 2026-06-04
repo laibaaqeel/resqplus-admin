@@ -102,6 +102,9 @@
   font-weight: 500;
 }
 .status-pill.active      { background: #fee2e2; color: #dc2626; }
+.status-pill.accepted    { background: #fff7ed; color: #c2410c; }
+.status-pill.en_route    { background: #dbeafe; color: #1d4ed8; }
+.status-pill.delivered   { background: #ccfbf1; color: #0f766e; }
 .status-pill.resolved    { background: #d1fae5; color: #059669; }
 .status-pill.false_alarm { background: #f3f4f6; color: #6b7280; }
 

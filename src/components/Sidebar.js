@@ -1,6 +1,6 @@
 import React from 'react';
 import { NavLink } from 'react-router-dom';
-import { LayoutDashboard, Building2, Users, AlertTriangle, Settings, Shield, BarChart2, Camera } from 'lucide-react';
+import { LayoutDashboard, Building2, Users, AlertTriangle, Settings, Shield, BarChart2 } from 'lucide-react';
 import './Sidebar.css';
 
 function Sidebar() {
@@ -9,7 +9,6 @@ function Sidebar() {
     { path: '/organizations', icon: Building2,        label: 'Organizations' },
     { path: '/users',         icon: Users,            label: 'Users' },
     { path: '/accidents',     icon: AlertTriangle,    label: 'Accidents' },
-    { path: '/cameras',       icon: Camera,           label: 'Cameras' },
     { path: '/reports',       icon: BarChart2,        label: 'Reports' },
     { path: '/settings',      icon: Settings,         label: 'Settings' },
   ];
