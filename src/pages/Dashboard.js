@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import StatCard from '../components/StatCard';
-import { AlertTriangle, Bell, Activity, Users, Zap, X } from 'lucide-react';
+import { AlertTriangle, Bell, Activity, Users, X } from 'lucide-react';
 import { MapContainer, TileLayer, Marker, Popup } from 'react-leaflet';
 import L from 'leaflet';
 import 'leaflet/dist/leaflet.css';
@@ -42,9 +42,14 @@ function Dashboard() {
   const [alert, setAlert] = useState(null);
   const [paramedicsOnMap, setParamedicsOnMap] = useState({});
   const [sosAlert, setSosAlert] = useState(null);
-  const [showTestModal, setShowTestModal] = useState(false);
-  const [testLoading, setTestLoading] = useState(false);
-  const [testForm, setTestForm] = useState({ location: 'Gulberg Main Boulevard, Lahore', latitude: '31.5204', longitude: '74.3587', severity: 'high', description: 'Test accident' });
+
+  // Restore any pending accident alert that survived a refresh
+  useEffect(() => {
+    const pending = localStorage.getItem('pendingAccidentAlert');
+    if (pending) {
+      try { setAlert(JSON.parse(pending)); } catch { localStorage.removeItem('pendingAccidentAlert'); }
+    }
+  }, []);
 
   // Fetch data on mount + every 30s
   useEffect(() => {
@@ -75,7 +80,8 @@ function Dashboard() {
         totalAccidents: prev.totalAccidents + 1,
       } : prev);
 
-      // Show popup alert
+      // Show popup alert — persisted in localStorage so it survives a refresh
+      localStorage.setItem('pendingAccidentAlert', JSON.stringify(accident));
       setAlert(accident);
       setTimeout(() => setAlert(null), 6000);
     });
@@ -94,21 +100,6 @@ function Dashboard() {
       socket.off('paramedic_sos');
     };
   }, []);
-
-  const fireTestAccident = async () => {
-    setTestLoading(true);
-    try {
-      const res = await fetch('https://resqplus-backend-production-89f4.up.railway.app/api/accidents', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ latitude: parseFloat(testForm.latitude), longitude: parseFloat(testForm.longitude), location: testForm.location, severity: testForm.severity, description: testForm.description }),
-      });
-      const data = await res.json();
-      if (res.ok) { setShowTestModal(false); }
-      else { alert('Error: ' + data.message); }
-    } catch { alert('Network error'); }
-    finally { setTestLoading(false); }
-  };
 
   const fetchDashboardData = async () => {
     try {
@@ -190,58 +181,6 @@ function Dashboard() {
         </div>
       )}
 
-      {/* Test Accident Button */}
-      <div className="test-accident-bar">
-        <button className="test-accident-btn" onClick={() => setShowTestModal(true)}>
-          <Zap size={15}/> Simulate Accident
-        </button>
-      </div>
-
-      {/* Test Accident Modal */}
-      {showTestModal && (
-        <div className="modal-overlay" onClick={(e) => { if (e.target === e.currentTarget) setShowTestModal(false); }}>
-          <div className="modal" style={{ maxWidth: 400 }}>
-            <div className="modal-header">
-              <h3>Simulate Accident</h3>
-              <button onClick={() => setShowTestModal(false)}>×</button>
-            </div>
-            <div className="form-group">
-              <label>Location</label>
-              <input type="text" value={testForm.location} onChange={e => setTestForm({...testForm, location: e.target.value})}/>
-            </div>
-            <div style={{ display:'grid', gridTemplateColumns:'1fr 1fr', gap:10 }}>
-              <div className="form-group">
-                <label>Latitude</label>
-                <input type="number" step="any" value={testForm.latitude} onChange={e => setTestForm({...testForm, latitude: e.target.value})}/>
-              </div>
-              <div className="form-group">
-                <label>Longitude</label>
-                <input type="number" step="any" value={testForm.longitude} onChange={e => setTestForm({...testForm, longitude: e.target.value})}/>
-              </div>
-            </div>
-            <div className="form-group">
-              <label>Severity</label>
-              <select value={testForm.severity} onChange={e => setTestForm({...testForm, severity: e.target.value})}>
-                <option value="low">Low</option>
-                <option value="medium">Medium</option>
-                <option value="high">High</option>
-                <option value="extreme">Extreme</option>
-              </select>
-            </div>
-            <div className="form-group">
-              <label>Description</label>
-              <input type="text" value={testForm.description} onChange={e => setTestForm({...testForm, description: e.target.value})}/>
-            </div>
-            <div className="modal-footer">
-              <button className="btn-secondary" onClick={() => setShowTestModal(false)}>Cancel</button>
-              <button className="btn-primary" onClick={fireTestAccident} disabled={testLoading} style={{ backgroundColor:'#dc2626' }}>
-                {testLoading ? 'Firing...' : '🚨 Fire Accident'}
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
-
       {/* Real-time Alert Popup */}
       {alert && (
         <div className="realtime-alert">
@@ -251,7 +190,7 @@ function Dashboard() {
             <p className="alert-location">{alert.location}</p>
             <p className="alert-severity">Severity: {alert.severity?.toUpperCase()}</p>
           </div>
-          <button className="alert-close" onClick={() => setAlert(null)}>×</button>
+          <button className="alert-close" onClick={() => { setAlert(null); localStorage.removeItem('pendingAccidentAlert'); }}>×</button>
         </div>
       )}
 

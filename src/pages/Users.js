@@ -19,6 +19,17 @@ function Users() {
 
   useEffect(() => { fetchUsers(); fetchOrganizations(); }, []);
 
+  useEffect(() => {
+    if (!showModal) return;
+    const block = (e) => {
+      if (e.key === 'Backspace' && e.target.tagName !== 'INPUT' && e.target.tagName !== 'TEXTAREA' && e.target.tagName !== 'SELECT') {
+        e.preventDefault();
+      }
+    };
+    document.addEventListener('keydown', block);
+    return () => document.removeEventListener('keydown', block);
+  }, [showModal]);
+
   const fetchUsers = async () => {
     try {
       const res = await api.get('/users');
