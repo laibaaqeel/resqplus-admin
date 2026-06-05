@@ -211,7 +211,11 @@
 .system-status-item { display: flex; align-items: center; gap: 8px; font-size: 11px; color: #333; }
 .system-status-item .status-ok { margin-left: auto; color: #16a34a; font-weight: 600; font-size: 10px; }
 .status-dot { width: 6px; height: 6px; border-radius: 50%; flex-shrink: 0; }
-.green-dot { background: #16a34a; box-shadow: 0 0 0 2px #dcfce7; }
+.green-dot  { background: #16a34a; box-shadow: 0 0 0 2px #dcfce7; }
+.red-dot    { background: #dc2626; box-shadow: 0 0 0 2px #fee2e2; }
+.yellow-dot { background: #f59e0b; box-shadow: 0 0 0 2px #fef3c7; }
+.status-err  { margin-left: auto; color: #dc2626; font-weight: 600; font-size: 10px; }
+.status-warn { margin-left: auto; color: #f59e0b; font-weight: 600; font-size: 10px; }
 
 /* ── PARAMEDIC ── */
 .paramedic-overview { display: flex; justify-content: space-around; padding: 8px 0; }

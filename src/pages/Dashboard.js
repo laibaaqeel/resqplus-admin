@@ -108,6 +108,7 @@ function Dashboard() {
     });
 
     socket.on('accident_status_updated', (data) => {
+      console.log('🔴 accident_status_updated received:', data);
       setRecentAccidents(prev => prev.map(a =>
         a.id === data.id ? { ...a, status: data.status } : a
       ));
@@ -382,24 +383,24 @@ function Dashboard() {
             <h4>System Status</h4>
             <div className="system-status-list">
               <div className="system-status-item">
-                <span className="status-dot green-dot"></span>
+                <span className={`status-dot ${stats !== null ? 'green-dot' : 'red-dot'}`}></span>
                 <span>Backend Server</span>
-                <span className="status-ok">Operational</span>
+                <span className={stats !== null ? 'status-ok' : 'status-err'}>{stats !== null ? 'Operational' : 'Offline'}</span>
               </div>
               <div className="system-status-item">
-                <span className="status-dot green-dot"></span>
+                <span className={`status-dot ${stats !== null ? 'green-dot' : 'red-dot'}`}></span>
                 <span>Database</span>
-                <span className="status-ok">Connected</span>
+                <span className={stats !== null ? 'status-ok' : 'status-err'}>{stats !== null ? 'Connected' : 'Disconnected'}</span>
               </div>
               <div className="system-status-item">
-                <span className="status-dot green-dot"></span>
+                <span className={`status-dot ${recentAccidents.length > 0 ? 'green-dot' : 'yellow-dot'}`}></span>
                 <span>YOLO Detection</span>
-                <span className="status-ok">Active</span>
+                <span className={recentAccidents.length > 0 ? 'status-ok' : 'status-warn'}>{recentAccidents.length > 0 ? 'Active' : 'No Data'}</span>
               </div>
               <div className="system-status-item">
-                <span className="status-dot green-dot"></span>
+                <span className={`status-dot ${socket.connected ? 'green-dot' : 'red-dot'}`}></span>
                 <span>Emergency Alerts</span>
-                <span className="status-ok">Live</span>
+                <span className={socket.connected ? 'status-ok' : 'status-err'}>{socket.connected ? 'Live' : 'Disconnected'}</span>
               </div>
             </div>
           </div>
