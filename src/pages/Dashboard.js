@@ -1,12 +1,23 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import StatCard from '../components/StatCard';
 import { AlertTriangle, Bell, Activity, Users, X } from 'lucide-react';
-import { MapContainer, TileLayer, Marker, Popup } from 'react-leaflet';
+import { MapContainer, TileLayer, Marker, Popup, useMap } from 'react-leaflet';
 import L from 'leaflet';
 import 'leaflet/dist/leaflet.css';
 import './Dashboard.css';
 import api from '../api/axios';
 import socket from '../socket';
+
+// Flies the Leaflet map to a target accident when selectedTarget changes
+function MapFlyTo({ target }) {
+  const map = useMap();
+  useEffect(() => {
+    if (target && target.latitude && target.longitude) {
+      map.flyTo([parseFloat(target.latitude), parseFloat(target.longitude)], 15, { duration: 1.2 });
+    }
+  }, [target]);
+  return null;
+}
 
 delete L.Icon.Default.prototype._getIconUrl;
 L.Icon.Default.mergeOptions({
@@ -42,6 +53,7 @@ function Dashboard() {
   const [alert, setAlert] = useState(null);
   const [paramedicsOnMap, setParamedicsOnMap] = useState({});
   const [sosAlert, setSosAlert] = useState(null);
+  const [selectedMapTarget, setSelectedMapTarget] = useState(null);
 
   // Restore any pending accident alert that survived a refresh
   useEffect(() => {
@@ -69,8 +81,9 @@ function Dashboard() {
       // Add to feed instantly
       setRecentAccidents(prev => [accident, ...prev]);
 
-      // Add to map
+      // Add to map + auto-fly to new accident
       setMapData(prev => [accident, ...prev]);
+      setSelectedMapTarget(accident);
 
       // Update stats
       setStats(prev => prev ? {
@@ -94,10 +107,27 @@ function Dashboard() {
       setSosAlert(data);
     });
 
+    socket.on('accident_status_updated', (data) => {
+      setRecentAccidents(prev => prev.map(a =>
+        a.id === data.id ? { ...a, status: data.status } : a
+      ));
+      setMapData(prev => prev.map(a =>
+        a.id === data.id ? { ...a, status: data.status } : a
+      ));
+      if (data.status === 'resolved') {
+        setStats(prev => prev ? {
+          ...prev,
+          activeEmergencies: Math.max(0, prev.activeEmergencies - 1),
+          totalResolved: prev.totalResolved + 1,
+        } : prev);
+      }
+    });
+
     return () => {
       socket.off('new_accident');
       socket.off('paramedic_location');
       socket.off('paramedic_sos');
+      socket.off('accident_status_updated');
     };
   }, []);
 
@@ -241,6 +271,7 @@ function Dashboard() {
               zoom={12}
               style={{ width: '100%', height: '100%', borderRadius: '8px' }}
             >
+              <MapFlyTo target={selectedMapTarget} />
               <TileLayer
                 attribution='&copy; OpenStreetMap contributors'
                 url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
@@ -297,7 +328,13 @@ function Dashboard() {
               </div>
             ) : (
               recentAccidents.map((accident) => (
-                <div key={accident.id} className="accident-item">
+                <div
+                  key={accident.id}
+                  className="accident-item"
+                  style={{ cursor: 'pointer' }}
+                  onClick={() => setSelectedMapTarget(accident)}
+                  title="Click to locate on map"
+                >
                   <div className="accident-severity-bar" style={{ background: getSeverityColor(accident.severity) }} />
                   <div className="accident-icon">
                     <AlertTriangle size={14} color={getSeverityColor(accident.severity)} />
