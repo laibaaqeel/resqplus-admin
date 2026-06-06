@@ -393,11 +393,6 @@ function Dashboard() {
                 <span className={stats !== null ? 'status-ok' : 'status-err'}>{stats !== null ? 'Connected' : 'Disconnected'}</span>
               </div>
               <div className="system-status-item">
-                <span className={`status-dot ${recentAccidents.length > 0 ? 'green-dot' : 'yellow-dot'}`}></span>
-                <span>YOLO Detection</span>
-                <span className={recentAccidents.length > 0 ? 'status-ok' : 'status-warn'}>{recentAccidents.length > 0 ? 'Active' : 'No Data'}</span>
-              </div>
-              <div className="system-status-item">
                 <span className={`status-dot ${socket.connected ? 'green-dot' : 'red-dot'}`}></span>
                 <span>Emergency Alerts</span>
                 <span className={socket.connected ? 'status-ok' : 'status-err'}>{socket.connected ? 'Live' : 'Disconnected'}</span>
