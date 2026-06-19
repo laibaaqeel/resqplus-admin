@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import StatCard from '../components/StatCard';
 import { AlertTriangle, Bell, Activity, Users, X } from 'lucide-react';
 import { MapContainer, TileLayer, Marker, Popup, useMap } from 'react-leaflet';
@@ -15,7 +15,7 @@ function MapFlyTo({ target }) {
     if (target && target.latitude && target.longitude) {
       map.flyTo([parseFloat(target.latitude), parseFloat(target.longitude)], 15, { duration: 1.2 });
     }
-  }, [target, map]);
+  }, [target]);
   return null;
 }
 
