@@ -37,7 +37,7 @@ function Settings() {
   const handlePasswordUpdate = async (e) => {
     e.preventDefault();
     if (passwordData.newPassword !== passwordData.confirmPassword) { toast.error('Passwords do not match'); return; }
-    if (passwordData.newPassword.length < 6) { toast.error('Password must be at least 6 characters'); return; }
+    if (passwordData.newPassword.length < 8) { toast.error('Password must be at least 8 characters'); return; }
     setPasswordLoading(true);
     try {
       await api.post('/auth/change-password', { current_password: passwordData.currentPassword, new_password: passwordData.newPassword });
@@ -90,7 +90,8 @@ function Settings() {
             <div className="form-group">
               <label>New Password</label>
               <input type="password" placeholder="Enter new password" value={passwordData.newPassword}
-                onChange={(e) => setPasswordData({...passwordData, newPassword: e.target.value})} required />
+                onChange={(e) => setPasswordData({...passwordData, newPassword: e.target.value})} required minLength={8} />
+              <small style={{ color: '#999', fontSize: 11 }}>Minimum 8 characters</small>
             </div>
             <div className="form-group">
               <label>Confirm New Password</label>
