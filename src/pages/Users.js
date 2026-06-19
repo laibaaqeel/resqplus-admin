@@ -66,18 +66,8 @@ function Users() {
     setShowModal(true);
   };
 
-  const EMAIL_REGEX = /^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)+$/;
-
   const handleSubmit = async (e) => {
     e.preventDefault();
-    if (!EMAIL_REGEX.test(formData.email.trim())) {
-      toast.error('Please enter a valid email address');
-      return;
-    }
-    if (formData.password && formData.password.length < 8) {
-      toast.error('Password must be at least 8 characters');
-      return;
-    }
     try {
       if (editingUser) {
         const updateData = { ...formData };
@@ -230,8 +220,7 @@ function Users() {
               </div>
               <div className="form-group">
                 <label>{editingUser ? 'New Password (leave blank to keep)' : 'Password'}</label>
-                <input type="password" value={formData.password} onChange={(e) => setFormData({...formData, password: e.target.value})} required={!editingUser} minLength={8} />
-                <small style={{ color: '#999', fontSize: 11 }}>Minimum 8 characters</small>
+                <input type="password" value={formData.password} onChange={(e) => setFormData({...formData, password: e.target.value})} required={!editingUser} />
               </div>
               <div className="form-group">
                 <label>Phone Number</label>
