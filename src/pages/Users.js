@@ -230,7 +230,7 @@ function Users() {
                 <label>Role</label>
                 <select value={formData.role} onChange={(e) => setFormData({...formData, role: e.target.value})}>
                   <option value="paramedic">Paramedic</option>
-                  <option value="admin">Admin</option>
+                  {editingUser?.role === 'admin' && <option value="admin">Admin</option>}
                 </select>
               </div>
               <div className="form-group">
