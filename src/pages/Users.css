@@ -215,24 +215,6 @@
 .form-group input:focus,
 .form-group select:focus { border-color: #C41E3A; }
 
-.form-group input.input-error { border-color: #dc2626; }
-.field-error {
-  display: block;
-  color: #dc2626;
-  font-size: 11px;
-  margin-top: 4px;
-}
-.form-error-banner {
-  background: #fee2e2;
-  color: #b91c1c;
-  border: 1px solid #fecaca;
-  border-radius: 8px;
-  padding: 9px 12px;
-  font-size: 12px;
-  font-weight: 500;
-  margin-bottom: 14px;
-}
-
 .modal-footer {
   display: flex;
   justify-content: flex-end;

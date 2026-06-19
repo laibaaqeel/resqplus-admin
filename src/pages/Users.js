@@ -16,8 +16,6 @@ function Users() {
     name: '', email: '', password: '', phone: '',
     role: 'paramedic', org_id: '', vehicle_type: 'ambulance'
   });
-  const [fieldErrors, setFieldErrors] = useState({});
-  const [formError, setFormError] = useState('');
 
   useEffect(() => { fetchUsers(); fetchOrganizations(); }, []);
 
@@ -55,8 +53,6 @@ function Users() {
   const openAddModal = () => {
     setEditingUser(null);
     setFormData({ name: '', email: '', password: '', phone: '', role: 'paramedic', org_id: '', vehicle_type: 'ambulance' });
-    setFieldErrors({});
-    setFormError('');
     setShowModal(true);
   };
 
@@ -67,8 +63,6 @@ function Users() {
       phone: user.phone || '', role: user.role || 'paramedic',
       org_id: user.org_id || '', vehicle_type: user.vehicle_type || 'ambulance'
     });
-    setFieldErrors({});
-    setFormError('');
     setShowModal(true);
   };
 
@@ -76,18 +70,14 @@ function Users() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    setFormError('');
-
-    const errors = {};
     if (!EMAIL_REGEX.test(formData.email.trim())) {
-      errors.email = 'Please enter a valid email address';
+      toast.error('Please enter a valid email address');
+      return;
     }
     if (formData.password && formData.password.length < 8) {
-      errors.password = 'Password must be at least 8 characters';
+      toast.error('Password must be at least 8 characters');
+      return;
     }
-    setFieldErrors(errors);
-    if (Object.keys(errors).length > 0) return;
-
     try {
       if (editingUser) {
         const updateData = { ...formData };
@@ -102,7 +92,7 @@ function Users() {
       setEditingUser(null);
       toast.success(editingUser ? 'User updated successfully' : 'User added successfully');
     } catch (err) {
-      setFormError(err.response?.data?.message || 'Failed to save user');
+      toast.error(err.response?.data?.message || 'Failed to save user');
     }
   };
 
@@ -230,35 +220,18 @@ function Users() {
               <button onClick={() => setShowModal(false)}>×</button>
             </div>
             <form onSubmit={handleSubmit} onKeyDown={(e) => { if (e.key === 'Enter' && e.target.tagName === 'INPUT') e.preventDefault(); }}>
-              {formError && <div className="form-error-banner">{formError}</div>}
               <div className="form-group">
                 <label>Full Name</label>
                 <input type="text" value={formData.name} onChange={(e) => setFormData({...formData, name: e.target.value})} required />
               </div>
               <div className="form-group">
                 <label>Email</label>
-                <input
-                  type="email"
-                  value={formData.email}
-                  onChange={(e) => { setFormData({...formData, email: e.target.value}); setFieldErrors(prev => ({...prev, email: ''})); }}
-                  required
-                  className={fieldErrors.email ? 'input-error' : ''}
-                />
-                {fieldErrors.email && <small className="field-error">{fieldErrors.email}</small>}
+                <input type="email" value={formData.email} onChange={(e) => setFormData({...formData, email: e.target.value})} required />
               </div>
               <div className="form-group">
                 <label>{editingUser ? 'New Password (leave blank to keep)' : 'Password'}</label>
-                <input
-                  type="password"
-                  value={formData.password}
-                  onChange={(e) => { setFormData({...formData, password: e.target.value}); setFieldErrors(prev => ({...prev, password: ''})); }}
-                  required={!editingUser}
-                  minLength={8}
-                  className={fieldErrors.password ? 'input-error' : ''}
-                />
-                {fieldErrors.password
-                  ? <small className="field-error">{fieldErrors.password}</small>
-                  : <small style={{ color: '#999', fontSize: 11 }}>Minimum 8 characters</small>}
+                <input type="password" value={formData.password} onChange={(e) => setFormData({...formData, password: e.target.value})} required={!editingUser} minLength={8} />
+                <small style={{ color: '#999', fontSize: 11 }}>Minimum 8 characters</small>
               </div>
               <div className="form-group">
                 <label>Phone Number</label>
@@ -268,7 +241,7 @@ function Users() {
                 <label>Role</label>
                 <select value={formData.role} onChange={(e) => setFormData({...formData, role: e.target.value})}>
                   <option value="paramedic">Paramedic</option>
-                  {editingUser?.role === 'admin' && <option value="admin">Admin</option>}
+                  <option value="admin">Admin</option>
                 </select>
               </div>
               <div className="form-group">
