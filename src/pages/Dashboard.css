@@ -45,7 +45,7 @@
 
 /* ── DASHBOARD WRAPPER ── */
 .dashboard {
-  padding: 12px 16px;
+  padding: 8px 16px;
   display: flex;
   flex-direction: column;
   gap: 10px;
@@ -116,7 +116,7 @@
 .dot.yellow { background: #f59e0b; }
 .dot.green  { background: #16a34a; }
 .dot.blue   { background: #1d4ed8; }
-.map-container { height: 220px; border-radius: 6px; overflow: hidden; }
+.map-container { height: 170px; border-radius: 6px; overflow: hidden; }
 
 /* ── FEED ── */
 .feed-card {
@@ -193,7 +193,7 @@
 .dashboard-card {
   background: white;
   border-radius: 8px;
-  padding: 12px 14px;
+  padding: 9px 14px;
   box-shadow: 0 1px 3px rgba(0,0,0,0.07);
 }
 .dashboard-card h4 { font-size: 12px; font-weight: 600; color: #333; margin: 0 0 10px 0; }
